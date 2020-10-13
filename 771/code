@@ -1,0 +1,25 @@
+class Solution {
+public:
+    int numJewelsInStones(string J, string S) {
+		int len = S.size();
+		if(len==0) return len;
+		bool done[52];
+		memset(done,false,sizeof(done));
+		for(int i=0;i<J.size();i++)
+		{
+			if(J[i] >= 97) done[J[i]-97+26] = true;
+			else done[J[i]-65] = true;
+		}
+		int solve = 0;
+		for(int i=0;i<len;i++)
+		{
+			if(S[i] >= 97) {
+				solve += done[S[i]-97+26];
+			}
+			else {
+				solve += done[S[i]-65];
+			}
+		}
+		return solve;
+    }
+};
