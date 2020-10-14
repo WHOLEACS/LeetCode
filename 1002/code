@@ -1,0 +1,39 @@
+class Solution {
+public:
+	//返回每个字符串中都出现的重复字符
+    vector<string> commonChars(vector<string>& A) {
+		int len = A.size();
+		if(len==0) return {};
+		int solve[26];
+		memset(solve,0,sizeof(solve));
+		for(int i=0;i<A[0].size();i++)
+		{
+			solve[A[0][i]-'a']++;
+		}
+		for(int i=1;i<len;i++)
+		{
+			int ano[26];
+			memset(ano,0,sizeof(ano));
+			for(int j=0;j<A[i].size();j++)
+			{
+				ano[A[i][j]-'a']++;
+			}
+			for(int j=0;j<26;j++)
+			{
+				solve[j] = min(solve[j],ano[j]);
+			}
+		}
+		string pos = "abcdefghijklmnopqrstuvwxyz";
+		vector<string> vec;
+		vec.clear();
+		for(int i=0;i<26;i++)
+		{
+			string now = pos.substr(i,1);
+			for(int j=0;j<solve[i];j++)
+			{
+				vec.push_back(now);
+			}
+		}
+		return vec;
+    }
+};
