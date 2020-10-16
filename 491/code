@@ -1,0 +1,38 @@
+class Solution {
+public:
+    //dp  得到的列表不能重复
+    vector<vector<int>> findSubsequences(vector<int>& nums) {
+        int len = nums.size();
+        if(len<=1) return {};
+        vector<vector<int>> solve;
+        solve.clear();
+        vector<vector<vector<int>>> vec(len);
+        vec.clear();
+        unordered_set<int> st;
+        st.clear();
+        vec[0].push_back({nums[0]});
+        st.insert(nums[0]);
+        for(int i=1;i<len;i++)
+        {
+            if(st.find(nums[i])==st.end()) {
+                vec[i].push_back({nums[i]});
+                st.insert(nums[i]);
+            }
+            bool flag = false;
+            for(int j=i-1;j>=0;j--)
+            {
+                if(flag) break;
+                if(nums[j] > nums[i]) continue;
+                if(nums[j] == nums[i]) flag = true;
+                for(int k=0;k<vec[j].size();k++)
+                {
+                    vector<int> now = vec[j][k];
+                    now.push_back(nums[i]);
+                    vec[i].push_back(now);
+                    solve.push_back(now);
+                }
+            }
+        } 
+        return solve;
+    }
+};
