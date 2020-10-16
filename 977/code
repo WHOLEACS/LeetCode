@@ -21,4 +21,4 @@ public:
 		solve[0] = A[l] * A[l];
 		return solve;
     }
-};
+};	
