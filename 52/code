@@ -1,0 +1,35 @@
+class Solution {
+private:
+    bool done[3][50];
+public:
+    Solution()
+    {
+        memset(done,false,sizeof(done));
+    }
+    //递归：返回值 调用单元 终止条件
+    void dfs(int row,int& solve,int& deep,const int& n)
+    {
+        if(deep==n) {
+            solve++;
+            return;
+        }
+        for(int i=0;i<n;i++)
+        {
+            if(!done[0][i] && !done[1][row+i] && !done[2][row-i+n]) {
+                done[0][i] = done[1][row+i] = done[2][row-i+n] = true;
+                deep++;
+                dfs(row+1,solve,deep,n);
+                deep--;
+                done[0][i] = done[1][row+i] = done[2][row-i+n] = false;
+            }
+        }
+    }
+    //n皇后问题
+    int totalNQueens(int n) {
+        if(n<0 || n==2 || n==3) return 0;
+        if(n==1) return 1;
+        int solve = 0 , deep = 0;
+        dfs(0,solve,deep,n);
+        return solve;
+    }
+};
