@@ -1,0 +1,89 @@
+typedef pair<int,int> PII;
+const int dx[] = {-1,1,0,0};
+const int dy[] = {0,0,-1,1};
+const int maxv = 100+5;
+class Solution {
+private:
+    bool done[maxv][maxv];
+    struct Node{
+        PII point;
+        int deep;
+        Node(PII point,int deep):point(point),deep(deep) {}
+    };
+public:
+    Solution()
+    {
+        memset(done,false,sizeof(done));
+    }
+    //首先进行标记，把第一个联通块标记成-1，第二个联通块标记成2
+    //递归：返回值 调用单元 终止条件
+    void dfs(int index_x,int index_y,vector<vector<int>>& matrix,const int& flag,const int& row,const int& col)
+    {
+        for(int i=0;i<4;i++)
+        {
+            int nx = index_x + dx[i] , ny = index_y + dy[i];
+            if(nx>=0&&nx<row&&ny>=0&&ny<col&&matrix[nx][ny]==1) {
+                matrix[nx][ny] = flag;
+                dfs(nx,ny,matrix,flag,row,col);
+            }
+        }
+    }
+    int bfs(const vector<vector<int>>& matrix,int index_x,int index_y,const int& row,const int& col)
+    {
+        queue<Node> pq;
+        while(!pq.empty()) pq.pop();
+        pq.push(Node(make_pair(index_x,index_y),0));
+        done[index_x][index_y] = true;
+        while(!pq.empty())
+        {
+            Node now = pq.front();
+            pq.pop();
+            if(matrix[now.point.first][now.point.second] == 2) return now.deep-1;
+            for(int i=0;i<4;i++)
+            {
+                int nx = now.point.first + dx[i] , ny = now.point.second + dy[i];
+                if(nx>=0 && nx<row && ny>=0 && ny<col && !done[nx][ny] && matrix[nx][ny]!=-1) {
+                    pq.push(Node(make_pair(nx,ny),now.deep+1));
+                    done[nx][ny] = true;
+                }
+            }
+        }
+        return 0x3f3f3f3f;
+    }
+    int shortestBridge(vector<vector<int>>& A) {
+        int row = A.size();
+        if(row==0) return 0;
+        int col = A[0].size();
+        int second = -1;
+        for(int i=0;i<row;i++)
+        {
+            for(int j=0;j<col;j++)
+            {
+                if(A[i][j]==1) {
+                    if(second==2) {
+                        A[i][j] = second;
+                        dfs(i,j,A,second,row,col);
+                    }
+                    else {
+                        A[i][j] = second;
+                        dfs(i,j,A,second,row,col);
+                        second = 2;
+                    }
+                }
+            }
+        }
+        int solve = row + col;
+        for(int i=0;i<row;i++)
+        {
+            for(int j=0;j<col;j++)
+            {
+                if(A[i][j]==-1) {
+                    //到最近的一个2
+                    memset(done,false,sizeof(done));
+                    solve = min(solve,bfs(A,i,j,row,col));
+                }
+            }
+        }
+        return solve;
+    }
+};
