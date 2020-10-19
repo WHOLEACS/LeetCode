@@ -1,0 +1,48 @@
+// ab## c#d#
+class Solution {
+public:
+	//时间复杂度：O(n) 空间复杂度：O(1)
+	//双指针  对于当前的字符，取决于其后的退格符，因此采用逆序遍历  这样的话，当遍历到当前的字符时，就可以知道这个字符是否是被删除的字符
+    bool backspaceCompare(string S, string T) {
+        int index_S = S.size()-1,index_T = T.size()-1;
+		int space_S = 0 , space_T = 0;
+		while(index_S >= 0 || index_T >= 0)
+		{
+			while(index_S >= 0) {
+				if(S[index_S] == '#') {
+					space_S++;
+					index_S--;
+				}
+				else if(space_S > 0) {
+					space_S--;
+					index_S--;
+				}
+				else {
+					break;
+				}
+			}
+			while(index_T >= 0) {
+				if(T[index_T] == '#') {
+					space_T++;
+					index_T--;
+				}
+				else if(space_T > 0) {
+					space_T--;
+					index_T--;
+				}
+				else {
+					break;
+				}
+			}
+			if(index_S >= 0 && index_T >= 0)
+			{
+				if(S[index_S] != T[index_T]) return false;
+			}
+			else {
+				if(index_S >= 0 || index_T >= 0) return false;
+			}
+			index_S--,index_T--;
+		}
+		return true;
+    }
+};

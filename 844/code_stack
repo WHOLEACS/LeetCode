@@ -1,0 +1,40 @@
+class Solution {
+public:
+	//时间复杂度：O(n) 空间复杂度：O(n)
+    bool backspaceCompare(string S, string T) {
+        stack<char> S_t;
+		while(!S_t.empty()) S_t.pop():
+		stack<char> T_t;
+		while(!T_t.empty()) T_t.pop();
+		for(int i=0;i<S.size();i++)
+		{
+			if(S[i] == '#') {
+				if(!S_t.empty()) {
+					S_t.pop();
+				}
+			}
+			else {
+				S_t.push(S[i]);
+			}
+		}
+		for(int i=0;i<T.size();i++)
+		{
+			if(T[i] == '#') {
+				if(!T_t.empty()) {
+					T_t.pop();
+				}
+			}
+			else {
+				T_t.push(T[i]);
+			}
+		}
+		while(!S_t.empty() && !T_t.empty())
+		{
+			if(S_t.top() != T_t.top()) return false;
+			S_t.pop();
+			T_t.pop();
+		}
+		if(S_t.empty() && T_t.empty()) return true;
+		return false;
+    }
+};
