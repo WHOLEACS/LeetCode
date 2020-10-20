@@ -1,0 +1,38 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+	//链表重排 递归:返回值 调用单元 终止条件
+	ListNode* dfs(int left,int right,vector<ListNode*>& vec)
+	{
+		vec[right]->next = nullptr;
+		if(vec[left] == vec[right] || vec[left]->next == vec[right]) {
+			return vec[left];
+		}
+		vec[left]->next = vec[right];
+		vec[right]->next = dfs(left+1,right-1);
+		return vec[left];
+	}
+    void reorderList(ListNode* head) {
+		if(head==nullptr || head->next==nullptr || head->next->next==nullptr) return;
+		vector<ListNode*> vec;
+		vec.clear();
+		ListNode* tail = head;
+		while(tail!=nullptr)
+		{
+			vec.push_back(tail);
+			tail = tail->next;
+		}
+		int len = vec.size();
+		dfs(0,len-1,vec);
+		return;
+    }
+};
