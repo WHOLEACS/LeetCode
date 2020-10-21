@@ -1,0 +1,30 @@
+class Solution {
+public:
+	//双指针 时间复杂度：O(n) 空间复杂度：O(1)
+    bool isLongPressedName(string name, string typed) {
+		int len_name = name.size();
+		int len_type = typed.size();
+		if(len_name == 0) return true;
+		if(len_type == 0) return false;
+		int index_name = 0 , index_type = 0;
+		while(index_name < len_name && index_type < len_type)
+		{
+			int num = 1;
+			index_name++;
+			while(index_name < len_name && name[index_name] == name[index_name-1]) {
+				num++;
+				index_name++;
+			}
+			if(typed[index_type] != name[index_name-1]) return false;
+			index_type++;
+			num--;
+			while(index_type < len_type && typed[index_type] == typed[index_type-1]) {
+				index_type++;
+				num--;
+			}
+			if(num>0) return false;
+		}
+		if(index_name >= len_name && index_type >= len_type) return true;
+		return false;
+    }
+};
