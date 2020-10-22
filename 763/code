@@ -1,0 +1,33 @@
+class Solution {
+public:
+	//哈希 + 双指针 + 贪心
+	//数学归纳法：每一次从新的l指针开始的时候都是保证了目前处于和原来相同的状态，保证了算法的正确性
+	//对于目前区间内的字母取它能够出现的最大下标，保证了每个合法的双指针区间存储了这个字母的全部，保证了一个字母无法出现在两个不同的区间中
+	//同时，一旦满足了条件就返回的方式使得片段个数尽可能多，每个片段的字符个数尽可能少
+    vector<int> partitionLabels(string S) {
+		int len = S.size();
+		if(len<=1) return {0};
+		unordered_map<int,int> mp;
+		mp.clear();
+		for(int i=0;i<len;i++)
+		{
+			mp[S[i]-'a'] = i;
+		}
+		int l = 0 , r = 0;
+		vector<int> solve;
+		solve.clear();
+		int end = l;
+		while(l<=r && r<len)
+		{
+			end = max(end,mp[S[r]-'a']);
+			if(r<end) r++;
+			else {
+				solve.push_back(r-l+1);
+				r++;
+				l = r;
+				end = l;
+			}
+		}
+		return solve;
+    }
+};
