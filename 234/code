@@ -1,0 +1,38 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+private:
+	bool flag = false;
+public:
+	//递归：返回值 调用单元 终止条件
+	bool dfs(ListNode*& front,ListNode* suf)
+	{ 
+		if(suf->next == nullptr) {
+			if(front->val != suf->val) return false;
+			return true;
+		}
+		else {
+			if(!dfs(front,suf->next)) return false;
+			if(flag) return true;
+			front = front->next;
+			if(front->val == suf->val) {
+				if(front == suf || front->next == suf) flag = true;
+				return true;
+			}
+			return false;
+		}
+	}
+	//时间复杂度：O(n) 空间复杂度：O(1)
+    bool isPalindrome(ListNode* head) {
+		if(head==nullptr || head->next==nullptr) return true;
+		ListNode* front = head;
+		ListNode* suf = head;
+		return dfs(front,suf);
+    }
+};
