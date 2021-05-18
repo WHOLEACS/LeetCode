@@ -13,4 +13,5 @@
 * 枚举区间左值，把\<区间左值i，sum[i]^sum[j+1]> 作为key，把这个异或值出现的次数作为value，枚举所有可能的区间
 * 双层循环，对于每个区间i和j（i\<j），在哈希表中查询\<区间左值为j，正在枚举得到的区间异或值>作为kay的value，并把它累加到结果solve中
 * 时间复杂度：O(n^2\*logn)(n^2是双层枚举复杂度，logn是当前区间查询map复杂度) 时间复杂度：O(n)
-> **这个题要格外注意下标的对应关系，分析清楚开闭区间在下标上的不同**
+> **这个题要格外注意下标的对应关系，分析清楚开闭区间在下标上的不同**<br>
+> [参考题解](https://leetcode-cn.com/problems/count-triplets-that-can-form-two-arrays-of-equal-xor/solution/xing-cheng-liang-ge-yi-huo-xiang-deng-sh-jud0/)
