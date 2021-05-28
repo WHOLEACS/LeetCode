@@ -41,6 +41,74 @@
 			} 
         ```
 * 树状数组
+    * 分析：每次查询[i-maxJump, i-minJump]这个区间，并把当前状态更新到树状数组上, 树状数组注意左右区间的开闭，同时看到一种优美的写法，函数嵌套到主函数内，参考下面这个find的写法
+    ```c++
+	// 树状数组查询操作, 查询[left, right]区间内是否存在可达点
+    // 注意查询区间的开闭关系
+    bool query(int left, int right) {
+        left = max(left, 0);
+        right++;
+        int ans_l = 0, ans_r = 0;
+        auto find = [&](int idx, int& ans) {
+            while (idx) {
+                ans += Tree[idx];
+                idx -= lowbit(idx);
+            }
+        };
+        find(left, ans_l);
+        find(right, ans_r);
+        return ans_r - ans_l > 0;
+    }
+    ```
+    * AC 时间复杂度：O(nlogn) 空间复杂度：O(n)
+    * [code](https://leetcode-cn.com/submissions/detail/180739743/)
 * 离散化 + map
+    * 分析：该方法是动态规划中从前向后方法的优化，进行了离散化，同时对于已经访问过的可达节点即使erase删除，避免了重复访问
+    * 根据实验，vector内部数据依次存放，而map和set内元素是分散的
+    * 从前向后更新，如果当前状态可达，[i+minJump, i+maxJump]利用map.lower\_bound和map.upper\_bound二分map，找到当前区间对应下标，更新can\_reach数组，并且删除可达位置
+    * AC 时间复杂度：O(mlogm) 空间复杂度：O(m)
+    ```c++
+		map<int, int> mp;
+        int m = vec.size();
+        for (int i = 0; i < m; i++) {
+            mp[vec[i]] = i;
+        }
+        // 从前向后更新
+        vector<bool> can_reach(m, false);
+        can_reach[0] = true;
+        for (int i = 0; i < m; i++) {
+            if (can_reach[i]) {
+                for (auto be = mp.lower_bound(vec[i] + minJump); be != mp.upper_bound(vec[i] + maxJump);) {
+                    can_reach[(*be).second] = true;
+                    // 删除当前可达点，避免重复访问 
+					auto next = be;
+                    next++;
+                    mp.erase(be);
+                    be = next;
+                }
+            }
+        }
+    ```
+    * [code](https://leetcode-cn.com/submissions/detail/180753806/)
 * 离散化 + 双端队列 deque
+    * 分析：和从后向前的动态规划方法差不多，只不过用队列维护了离散化后的状态和sum
+    * 使用了deque双端队列，pop\_back() emplace\_back() pop\_front() emplace\_front()
+    * 关键代码
+    ```c++
+		int ptr = 0;
+        for (int i = 1; i < m; i++) {
+            while (ptr < m && vec[ptr] + minJump <= vec[i]) {
+                if (can_reach[ptr]) {
+                    dq.emplace_back(vec[ptr]);
+                }
+                ptr++;
+            }
+            while (!dq.empty() && dq.front() < vec[i] - maxJump) {
+                dq.pop_front();
+            }
+            can_reach[i] = !dq.empty();
+        }
+    ```
+	* AC 时间复杂度：O(m) 空间复杂度：O(m)
+	* [code](https://leetcode-cn.com/submissions/detail/180905414/)
 #### D
