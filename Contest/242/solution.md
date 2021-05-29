@@ -112,3 +112,29 @@
 	* AC 时间复杂度：O(m) 空间复杂度：O(m)
 	* [code](https://leetcode-cn.com/submissions/detail/180905414/)
 #### D
+* 前缀和 + 博弈思想动态规划
+    * 分析
+        * 每个人取完后都要把和放到左侧，这意味着前缀和保持不变，在任意一个人操作后，剩余所有石子的价值总和不会改变
+        * 前缀和保持不变，等价于我们可以把问题等价转换成在前缀和数组中执行操作，每次从左侧取大于1个，意味着至少从1开始拿；当上一个人取到u时，下一个人只能从[u+1,n)这个区间取值
+        * 状态定义：dp[i]表示Alice可以选择的下标u在[i,n)时，Alice和Bob的分数的最大差值
+        * 状态转移：以Alice是否选择了下标i做讨论
+            * 如果Alice不选择i，那么dp[i]=dp[i+1]
+            * 否则，Alice选择了i，此时取到了前缀和pre_sum[i], 在[i+1,n)内是Bob**先手**(注意这里先后手的转换)拿到的最大差值f[i+1], 那么设Alice在[i,n)内分数为A，Bob在[i+1,n)内分数为B，即f[i+1]=B-A, 这样dp[i](Alice先手)=pre[i]+(A-B)=pre[i]-(B-A)=pre[i]-f[i+1]
+        * 初始状态
+            * dp[len-1] = pre_sum[i-1]
+            * 最后答案是dp[1], 只是因为dp[0]是不存在的，我们每次取至少要拿大于一个
+    * AC 时间复杂度：O(n) 空间复杂度：O(n)
+    * 关键代码
+    ```c++
+    pre[0] = stones[0];
+    for (int i = 1; i < len; i++) {
+        pre[i] = pre[i-1] + stones[i];
+    }
+    dp[len - 1] = pre[len - 1];
+    for (int i = len - 2; i >= 1; i--) {
+        dp[i] = max(dp[i+1], pre[i] - dp[i+1]);
+    }
+    return dp[1];
+    ```
+    * [code](https://leetcode-cn.com/submissions/detail/181828260/)
+> [官方题解](https://leetcode-cn.com/problems/stone-game-viii/solution/shi-zi-you-xi-viii-by-leetcode-solution-e8dx/)
