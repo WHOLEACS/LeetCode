@@ -39,4 +39,5 @@
     * i = 0时，表示没有路可走，f\[i][j]=0
 * return 结果
     * 得到的是最短耗时，从左到右遍历第n行，取第一个时间<=hoursBefore的列下标即是解
+* 时间复杂度：O(nm) 空间复杂度：O(nm)
 * [注]**精度问题**, 详见[题解](https://leetcode-cn.com/problems/minimum-skips-to-arrive-at-meeting-on-time/solution/minimum-skips-to-arrive-at-meeting-on-ti-dp7v/)
