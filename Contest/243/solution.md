@@ -24,4 +24,19 @@
 * 注意只有一台服务器的情况
 * 时间复杂度：O(mlogm + n) 空间复杂度：O(m+n) m:服务器数量 n:任务数量
 #### D
-
+* 动态规划
+    * 缩小问题规模
+        * 讨论最后一段距离是跳过还是不跳过，那么问题规模-1,找到小规模的问题的解与大问题中最后一段距离的状态转移方式即可求解
+    * 最优子结构，部分的最优解不一定带来全局的最优解
+* 状态定义
+    * f\[i][j]表示前i段跳过j次后的最短耗时
+* 状态转移
+    * 以第i段是否跳过做讨论，如果第i段跳过，f\[i][j]=f\[i-1][j-1]+dist[i-1]/speed，否则，不跳过，f\[i][j]=ceil(f\[i-1][j]+dist[i-1]/speed), 因为不跳过时，最后一段要等待直到到达整点，所以要向上取整, f\[i][j]=min(f\[i-1][j-1]+dist[i-1]/speed, ceil(dp\[i-1][j]+dist[i-1]/speed))
+* 边界case
+    * j > i时，j超过过了此时的最大跳过次数，这个状态不合法
+    * j = i时，j达到了最大的跳过次数，此时第i段只能选择跳过
+    * j = 0时，此时f\[i][j]只能从不跳过转移而来
+    * i = 0时，表示没有路可走，f\[i][j]=0
+* return 结果
+    * 得到的是最短耗时，从左到右遍历第n行，取第一个时间<=hoursBefore的列下标即是解
+* [注]**精度问题**, 详见[题解](https://leetcode-cn.com/problems/minimum-skips-to-arrive-at-meeting-on-time/solution/minimum-skips-to-arrive-at-meeting-on-ti-dp7v/)
