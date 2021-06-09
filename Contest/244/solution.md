@@ -57,3 +57,70 @@ while (r < T.size() - 1) {
 * 返回solve
 * 时间复杂度：O(n) 空间复杂度：O(n) n = len(s)
 #### D
+* 暴力解法 TLE
+    * 目的：浪费空间最小化
+    * 思路：遍历箱子数组，对每个箱子进行排序，遍历背包，二分找到大于等于当前背包容量的且最小的箱子，使得浪费空间最低
+    * 时间复杂度：O(m\*(nlogn + klogn)) 空间复杂度：O(n) m = len(boxes) n = len(boxes[i]) k = len(packages)
+```c++
+for (int i = 0; i < len_box; i++) {
+	vector<int> temp = boxes[i];
+	sort(temp.begin(), temp.end());
+	if (temp[temp.size() - 1] < packages[len_pac - 1]) {
+		continue;
+	}
+	LL k = 0;
+	for (int j = 0; j < len_pac; j++) {
+		k = (k + 1l * ((*lower_bound(temp.begin(), temp.end(), packages[j])) - packages[j]) % MOD) % MOD;
+	}
+	solve = min(solve, k);
+}
+```
+* 前缀和 + 二分 + 双指针 AC
+    * 暴力法复杂度过高，主要是mk两个for循环引发的
+    * 题目中数据范围有明显提示 ***sum(boxes[j].length) <= 10^5***, 这意味着boxes中总箱子数量不超过10^5个！！！，根据这一点，我们从箱子的角度进行二分，而不是从背包的角度，这样的话，下面的代码，即使是两个for循环，其次数是<=10^5的
+    ```c++
+	for (int i = 0; i < len_box; i++) {
+            vector<int> temp = boxes[i]; 
+            sort(temp.begin(), temp.end());
+			for (int& it : temp) {
+			// 从箱子除法对package进行二分
+		}
+	}
+    ```
+	* 根据上面的分析，对背包进行排序，做前缀和，遍历箱子二分得到当前这个箱子所能涵盖的背包数量，使用数量\*箱子容量-背包前缀和就得到这个区间内背包的最小浪费空间，利用双指针继续迭代向后，直到所有的背包或者箱子被处理结束
+    * 时间复杂度：O(mlogm+n(klogk+klogm)) 空间复杂度：O(m+n) m=packages.size() n=boxes.size() k=boxes[i].size()
+    ```c++
+	LL solve = LLONG_MAX;
+	// 前缀和
+    vector<LL> sum(len_pac + 1, 0);
+	for (int i = 1; i < len_pac + 1; i++) {
+		sum[i] = 1l * sum[i-1] + 1l * packages[i-1];
+	}
+	for (int i = 0; i < len_box; i++) {
+		vector<int> temp = boxes[i]; 
+		sort(temp.begin(), temp.end());
+		if (temp[temp.size() - 1] < packages[len_pac - 1]) {
+			continue;
+		}
+		LL k = 0;
+        // 双指针
+		int l = 0, r;
+		for (int& it : temp) {
+            // 二分
+			r = upper_bound(packages.begin(), packages.end(), it) - packages.begin();
+			if (r <= l) {
+				continue;
+			}
+			k = (k + (1l * (1l * r - l) * it - 1l * sum[r] + sum[l]));
+			l = r;
+			if (l == packages.size()) {
+				break;
+			}
+		}
+		solve = min(solve, k);
+	}
+    ```
+    * 注意本题不能在运算中途对MOD取模，可能对带来错误
+        * 首先solve需要赋值一个足够大的数，在这里我们赋值solve=LLONG_MAX=9223372036854775807 \> 9*1e18
+        * 不能在中途取模的原因是我们需要得到的不是取模后的最小值，而是最小值后再取模，二者有一些差别
+            * eg：min[6,12] mod 7, 正确结果是6， 而我们直接按照取模后的值来取min，就会得到min(6, 5) = 5
